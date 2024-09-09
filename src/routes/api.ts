@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateJwt } from '../utils/jwt';
+import { generateJwt, verifyJwt } from '../utils/jwt';
 import { Login } from '../utils/user';
 import { authenticate } from '../utils/db';
 
@@ -10,11 +10,17 @@ router.get('/hello', (req, res) => {
 });
 
 router.get('/me', (req, res) => {
-  if (!req.cookies.jwt) {
+  if (!req.cookies.user) {
     console.error('No user cookie found');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   console.log(`Found user cookie (it should be a JWT): ${req.cookies.user}`);
+  const verification = verifyJwt(req.cookies.user);
+  if (verification.status === 'failed') {
+    return res.status(403).json({ error: 'Verification failed' });
+  }
+
+  res.send(verification.payload);
 });
 
 router.get('/secret', (req, res) => {
@@ -31,11 +37,11 @@ router.post('/login', async (req, res) => {
     // locate user in "db"
     const user = authenticate(payload);
     if (!user) {
-      return res.status(403).json({ error: 'Forbidden' });
+      return res.status(403).json({ error: 'No such user' });
     }
 
     const token = await generateJwt(user);
-    res.header('Set-Cookie', `jwt=${token}; HttpOnly; Secure`);
+    res.header('Set-Cookie', `user=${token}; HttpOnly`);
     res.sendStatus(204);
   } catch (error) {
     res.status(400).json({ error: 'Failed to generate JWT' });

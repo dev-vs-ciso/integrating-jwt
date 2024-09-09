@@ -1,4 +1,5 @@
 import * as crypto from 'crypto';
+import { VerificationResult } from './user';
 
 function toBase64(str: string): string {
   return Buffer.from(str).toString('base64')
@@ -29,6 +30,14 @@ export async function generateJwt<T>(payload: T): Promise<string> {
   return `${headerEnc}.${payloadEnc}.${signature}`;
 }
 
-export function verifyJwt<T>(token: string): T | null {
-  return null;
+export function verifyJwt<T>(token: string): VerificationResult<T> {
+  const [header, payload, signature] = token.split('.');
+  if (!header || !payload || !signature) {
+    return { status: 'failed' };
+  }
+
+  return { 
+    status: 'success', 
+    payload: JSON.parse(Buffer.from(payload, 'base64').toString()) 
+  };
 }

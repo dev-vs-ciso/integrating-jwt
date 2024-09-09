@@ -13,3 +13,14 @@ export interface Login {
 }
 
 export type LoginResult = Login & { id: number }
+
+export interface FailedVerification {
+    status: "failed";
+}
+
+export interface SuccessfulVerification<T> {
+    status: "success";
+    payload: T;
+}
+
+export type VerificationResult<T> = FailedVerification | SuccessfulVerification<T>;
