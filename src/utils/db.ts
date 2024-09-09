@@ -1,6 +1,6 @@
 import { Login, LoginResult, User } from "./user";
 
-const users : User[] = [
+export const users : User[] = [
     {
         id: 1,
         email: 'user.userson@example.com',

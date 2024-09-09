@@ -23,7 +23,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       const title = document.getElementById("user-title");
       title.innerText = `Welcome, ${userData.firstName} ${userData.lastName}`;
       const details = document.getElementById("user-details");
-      details.innerText = `You are logged in as a ${userData.role}. Your email is ${userData.email}, and your secret information is ${userData.secret}`;
+      details.innerHTML = `You are logged in as a ${userData.role}. Your email is ${userData.email}, and your secret information is <button id="secret-button">Reveal</button>`;
+      const secretButton = document.getElementById("secret-button");
+      secretButton.addEventListener("click", async () => {
+        const secret = await fetch("/api/secret");
+        if (secret.status === 200) {
+          const secretData = await secret.json();
+          details.innerText = `You are logged in as a ${userData.role}. Your email is ${userData.email}, and your secret information is ${secretData.secret}`;
+        }
+      });
       logged.style.display = "block";
       return;
     }
@@ -54,8 +62,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
       body: JSON.stringify({ username, password }),
     });
-    
-    await fetchUserData();
+
+    if (response.status === 204) {
+      // login successful
+      await fetchUserData();
+      return;
+    }
+
+    // login failed
+    anon.style.display = "block";
+    logged.style.display = "none";
+    login.style.display = "none";
+
+
   });
 
   await fetchUserData();
