@@ -3,6 +3,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const anon = document.getElementById("anon-container");
   const logged = document.getElementById("logged-container");
 
+  // hide everything
+  login.style.display = "none";
+  anon.style.display = "none";
+  logged.style.display = "none";
+
+  // prevent form from submitting
+  document.getElementById("login-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+  });
+
   const fetchUserData = async () => {
     anon.style.display = "none";
     logged.style.display = "none";
@@ -40,16 +50,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     anon.style.display = "block";
   };
 
-  // hide everything
-  login.style.display = "none";
-  anon.style.display = "none";
-  logged.style.display = "none";
-
-  // prevent form from submitting
-  document.getElementById("login-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-  });
-
   // login button
   document.getElementById("login-button").addEventListener("click", async () => {
     const username = document.getElementById("username").value;
@@ -73,8 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     anon.style.display = "block";
     logged.style.display = "none";
     login.style.display = "none";
-
-
   });
 
   await fetchUserData();
