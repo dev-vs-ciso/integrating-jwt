@@ -27,7 +27,7 @@ const authDetails: LoginResult[] = [
     },
     {
         username: 'admin',
-        password: 'password',
+        password: process.env.ADMIN_PASSWORD || 'admin',
         id: 2
     }
 ];
